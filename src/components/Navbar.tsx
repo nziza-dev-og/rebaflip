@@ -1,6 +1,6 @@
 import  { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Film, LogOut, Menu, User } from 'lucide-react';
+import {  LogOut, Menu, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Navbar() {
@@ -22,8 +22,8 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex-shrink-0 flex items-center">
-            <Film className="text-[#e50914] h-8 w-8" />
-            <span className="ml-2 text-xl font-bold">CineFlix</span>
+          <img src="/assets/large-removebg-preview.png" alt="Description of Image" size={25} />
+            <span className="ml-2 text-xl font-bold">RebaFlip</span>
           </Link>
           
           <div className="hidden md:block">

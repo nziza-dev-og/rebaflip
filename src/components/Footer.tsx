@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
           <div className="flex items-center mb-6 md:mb-0">
             <Film className="text-[#e50914] h-8 w-8" />
-            <span className="ml-2 text-xl font-bold">CineFlix</span>
+            <span className="ml-2 text-xl font-bold">RebaFlip</span>
           </div>
           
           <div className="flex space-x-6">
@@ -45,7 +45,7 @@ export default function Footer() {
           <div>
             <h3 className="text-gray-400 font-medium mb-4">Discover</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-500 hover:text-white">Movies</a></li>
+              <li><a href="/movies" className="text-gray-500 hover:text-white">Movies</a></li>
               <li><a href="#" className="text-gray-500 hover:text-white">New Releases</a></li>
               <li><a href="#" className="text-gray-500 hover:text-white">Popular</a></li>
             </ul>
