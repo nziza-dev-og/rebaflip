@@ -69,7 +69,7 @@ export default function VideoPlayer({
       new URL(url);
       
       // If URL is already using proxy or is a YouTube embed, return as is
-      if (url.includes('hooks.jdoodle.net/proxy') || url.includes('youtube.com/embed')) {
+      if (url.includes('http://localhost:4000/proxy') || url.includes('youtube.com/embed')) {
         return url;
       }
       
@@ -90,7 +90,7 @@ export default function VideoPlayer({
       }
       
       // For direct video files (mp4, etc), use proxy to avoid CORS
-      return `https://hooks.jdoodle.net/proxy?url=${encodeURIComponent(url)}`;
+      return `http://localhost:4000/proxy?url=${encodeURIComponent(url)}`;
     } catch (err) {
       console.error('Invalid URL:', url);
       setError('Invalid video URL');
