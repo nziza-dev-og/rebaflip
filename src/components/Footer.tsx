@@ -17,7 +17,7 @@ export default function Footer() {
             <a href="#" className="text-gray-400 hover:text-white">
               <Instagram className="h-6 w-6" />
             </a>
-            <a href="#" className="text-gray-400 hover:text-white">
+            <a href="https://github.com/nziza-dev-og" className="text-gray-400 hover:text-white">
               <Github className="h-6 w-6" />
             </a>
           </div>
@@ -54,7 +54,7 @@ export default function Footer() {
           <div>
             <h3 className="text-gray-400 font-medium mb-4">Connect</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-500 hover:text-white">Twitter</a></li>
+              <li><a href="https://github.com/nziza-dev-og" className="text-gray-500 hover:text-white">Github</a></li>
               <li><a href="#" className="text-gray-500 hover:text-white">Instagram</a></li>
               <li><a href="#" className="text-gray-500 hover:text-white">Facebook</a></li>
             </ul>
@@ -62,7 +62,7 @@ export default function Footer() {
         </div>
         
         <div className="border-t border-gray-800 pt-8">
-          <p className="text-gray-500 text-center">© {new Date().getFullYear()} CineFlix. All rights reserved.</p>
+          <p className="text-gray-500 text-center">© {new Date().getFullYear()} RebaFlip. All rights reserved.</p>
         </div>
       </div>
     </footer>
