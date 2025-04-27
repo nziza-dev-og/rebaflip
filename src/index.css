@@ -1,0 +1,91 @@
+@tailwind  base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --primary: 346 100% 58%;
+    --primary-hover: 346 100% 50%;
+    --theme-opacity: 100%;
+  }
+  
+  body {
+    @apply bg-[#0f0f0f] text-white;
+    opacity: var(--theme-opacity);
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-[#e50914] hover:bg-[#c70812] px-6 py-2 rounded font-medium transition-colors;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-800 hover:bg-gray-700 px-6 py-2 rounded font-medium transition-colors;
+  }
+  
+  .input-field {
+    @apply bg-gray-800 rounded px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-[#e50914];
+  }
+  
+  /* Video player styles */
+  .video-container {
+    @apply aspect-video max-h-[75vh] w-full bg-black overflow-hidden relative;
+  }
+  
+  .video-container video,
+  .video-container iframe {
+    @apply w-full h-full object-contain;
+  }
+  
+  .video-container video::-webkit-media-controls-timeline,
+  .video-container video::-webkit-media-controls-play-button,
+  .video-container video::-webkit-media-controls-volume-slider {
+    @apply accent-[#e50914];
+  }
+  
+  /* Range input styling */
+  input[type="range"] {
+    @apply appearance-none bg-gray-700 h-2 rounded-lg;
+  }
+  
+  input[type="range"]::-webkit-slider-thumb {
+    @apply appearance-none w-4 h-4 rounded-full bg-[#e50914] cursor-pointer;
+  }
+  
+  input[type="range"]::-moz-range-thumb {
+    @apply w-4 h-4 rounded-full bg-[#e50914] cursor-pointer border-none;
+  }
+  
+  /* Dark mode toggle */
+  .dark-mode {
+    @apply bg-[#0f0f0f] text-white;
+  }
+  
+  /* Toggle switch */
+  .toggle-switch {
+    @apply relative inline-block w-12 h-6;
+  }
+  
+  .toggle-switch input {
+    @apply opacity-0 w-0 h-0;
+  }
+  
+  .toggle-slider {
+    @apply absolute cursor-pointer inset-0 bg-gray-700 transition-all rounded-full;
+  }
+  
+  .toggle-slider:before {
+    @apply absolute content-[''] h-4 w-4 left-1 bottom-1 bg-white rounded-full transition-all;
+  }
+  
+  input:checked + .toggle-slider {
+    @apply bg-[#e50914];
+  }
+  
+  input:checked + .toggle-slider:before {
+    @apply translate-x-6;
+  }
+}
+ 
