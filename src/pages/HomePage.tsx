@@ -15,9 +15,9 @@ export default function HomePage() {
   const [dramaMovies, setDramaMovies] = useState<Movie[]>([]);
   const [showTrailer, setShowTrailer] = useState(false);
   const [theaterBackgrounds] = useState([
-    "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwxfHxkYXJrJTIwY2luZW1hJTIwbW92aWUlMjB0aGVhdGVyfGVufDB8fHx8MTc0NTY1MTQ2MHww&ixlib=rb-4.0.3&fit=fillmax&h=1080&w=1920",
-    "https://images.unsplash.com/photo-1478720568477-152d9b164e26?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwyfHxkYXJrJTIwY2luZW1hJTIwbW92aWUlMjB0aGVhdGVyfGVufDB8fHx8MTc0NTY1MTQ2MHww&ixlib=rb-4.0.3&fit=fillmax&h=1080&w=1920",
-    "https://images.unsplash.com/photo-1513106580091-1d82408b8cd6?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwzfHxkYXJrJTIwY2luZW1hJTIwbW92aWUlMjB0aGVhdGVyfGVufDB8fHx8MTc0NTY1MTQ2MHww&ixlib=rb-4.0.3&fit=fillmax&h=1080&w=1920"
+    "https://i.pinimg.com/736x/c1/44/a9/c144a9d72f82e553ffbf5595fff0cd69.jpg",
+    "https://i.pinimg.com/736x/b0/63/cd/b063cdfcb11fbef08013617da665aa8d.jpg",
+    "https://i.pinimg.com/736x/02/16/d3/0216d3d1bfc4ec84482b1e3da66d9be0.jpg"
   ]);
   
   useEffect(() => {
