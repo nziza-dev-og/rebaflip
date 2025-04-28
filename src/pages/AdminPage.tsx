@@ -1,6 +1,6 @@
-import  { useState, useEffect, FormEvent, ChangeEvent } from 'react';
+import  { useState, useEffect, FormEvent, ChangeEvent, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Film, Plus, Edit, Trash, Star, AlertCircle, Info } from 'lucide-react';
+import { Film, Plus, Edit, Trash, Star, AlertCircle, Info, Upload, X } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useAuth } from '../contexts/AuthContext';
@@ -10,7 +10,7 @@ import { Movie } from '../types';
 export default function AdminPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { movies, loading, fetchMovies, addMovie, updateMovie, deleteMovie } = useMovies();
+  const { movies, loading, fetchMovies, addMovie, updateMovie, deleteMovie, uploadMovieFile } = useMovies();
   
   const [showForm, setShowForm] = useState(false);
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
@@ -30,9 +30,17 @@ export default function AdminPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   
+  // File upload states
+  const [movieFile, setMovieFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [showLocalUpload, setShowLocalUpload] = useState(false);
+  
+  const movieFileInputRef = useRef<HTMLInputElement>(null);
+  
   const [availableGenres] = useState([
     'Action', 'Adventure', 'Comedy', 'Drama', 'Fantasy', 'Horror', 
-    'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'Western', 'History', 'Animation'
+    'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'Western', 'Animation'
   ]);
 
   // Validate that the user is an admin
@@ -82,6 +90,9 @@ export default function AdminPage() {
     setPosterFile(null);
     setPosterPreview('');
     setEditingMovie(null);
+    setMovieFile(null);
+    setUploadProgress(0);
+    setShowLocalUpload(false);
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -116,6 +127,21 @@ export default function AdminPage() {
     }
   };
 
+  const handleMovieFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setMovieFile(file);
+      // Clear any previous videoUrl when uploading a file
+      setFormData(prev => ({ ...prev, videoUrl: '' }));
+    }
+  };
+
+  const handleUploadClick = () => {
+    if (movieFileInputRef.current) {
+      movieFileInputRef.current.click();
+    }
+  };
+
   const validateForm = () => {
     if (!formData.title.trim()) {
       setError('Movie title is required');
@@ -137,8 +163,9 @@ export default function AdminPage() {
       return false;
     }
     
-    if (!formData.videoUrl.trim()) {
-      setError('Video URL is required');
+    // Require either a videoUrl or a movie file
+    if (!formData.videoUrl.trim() && !movieFile) {
+      setError('Please provide either a video URL or upload a movie file');
       return false;
     }
     
@@ -154,8 +181,8 @@ export default function AdminPage() {
       return false;
     }
     
-    // For URL validation of videoUrl
-    if (!isValidUrl(formData.videoUrl)) {
+    // For URL validation of videoUrl (if provided and not uploading a file)
+    if (formData.videoUrl.trim() && !isValidUrl(formData.videoUrl) && !movieFile) {
       setError('Video URL is not valid');
       return false;
     }
@@ -183,10 +210,29 @@ export default function AdminPage() {
     }
     
     try {
+      setIsUploading(true);
+      
+      // Define a function to handle upload progress
+      const onProgress = (progress: number) => {
+        setUploadProgress(progress);
+      };
+      
+      // If a movie file is selected, upload it to storage first
+      let finalVideoUrl = formData.videoUrl;
+      if (movieFile) {
+        const uploadedUrl = await uploadMovieFile(movieFile, formData.title, onProgress);
+        if (uploadedUrl) {
+          finalVideoUrl = uploadedUrl;
+        } else {
+          throw new Error('Failed to upload movie file');
+        }
+      }
+      
       if (editingMovie) {
         // Updating existing movie
         const success = await updateMovie(editingMovie.id, {
           ...formData,
+          videoUrl: finalVideoUrl,
           posterUrl: formData.posterUrl || posterPreview // Use existing preview if no new URL
         });
         
@@ -207,6 +253,7 @@ export default function AdminPage() {
         const dummyFile = new File([""], "poster.jpg", { type: "image/jpeg" });
         const newMovie = await addMovie({
           ...formData,
+          videoUrl: finalVideoUrl,
           posterUrl
         }, posterFile || dummyFile);
         
@@ -219,6 +266,9 @@ export default function AdminPage() {
     } catch (err: any) {
       setError('Failed to save movie: ' + err.message);
       console.error(err);
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -239,6 +289,13 @@ export default function AdminPage() {
         setError('Failed to delete movie: ' + err.message);
         console.error(err);
       }
+    }
+  };
+
+  const clearMovieFile = () => {
+    setMovieFile(null);
+    if (movieFileInputRef.current) {
+      movieFileInputRef.current.value = '';
     }
   };
 
@@ -394,25 +451,6 @@ export default function AdminPage() {
                   </div>
                   
                   <div className="mb-4">
-                    <label className="block mb-2 text-sm font-medium">
-                      Video URL*
-                    </label>
-                    <input
-                      type="url"
-                      name="videoUrl"
-                      className="input-field"
-                      value={formData.videoUrl}
-                      onChange={handleChange}
-                      placeholder="https://example.com/video.mp4"
-                      required
-                    />
-                    <div className="flex items-center mt-1 text-xs text-gray-400">
-                      <Info className="h-3 w-3 mr-1" />
-                      <span>Use direct video URLs or YouTube links</span>
-                    </div>
-                  </div>
-                  
-                  <div className="mb-4">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
@@ -474,14 +512,115 @@ export default function AdminPage() {
                       onChange={handlePosterChange}
                       className="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-gray-700 file:text-white hover:file:bg-gray-600"
                     />
+                  </div>
+                  
+                  <div className="mt-6">
+                    <h3 className="text-lg font-medium mb-2">Movie Video*</h3>
                     
-                    <div className="mt-6 p-4 bg-gray-800 rounded-lg">
-                      <h3 className="text-lg font-medium mb-2">Video Format Guide</h3>
-                      <p className="text-sm text-gray-300 mb-4">
+                    <div className="flex mb-4">
+                      <button
+                        type="button"
+                        className={`flex-1 py-2 text-center ${!showLocalUpload ? 'bg-[#e50914] text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'}`}
+                        onClick={() => setShowLocalUpload(false)}
+                      >
+                        External URL
+                      </button>
+                      <button
+                        type="button"
+                        className={`flex-1 py-2 text-center ${showLocalUpload ? 'bg-[#e50914] text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'}`}
+                        onClick={() => setShowLocalUpload(true)}
+                      >
+                        Upload Video
+                      </button>
+                    </div>
+                    
+                    {!showLocalUpload ? (
+                      <div className="mb-4">
+                        <label className="block mb-2 text-sm font-medium">
+                          Video URL
+                        </label>
+                        <input
+                          type="url"
+                          name="videoUrl"
+                          className="input-field"
+                          value={formData.videoUrl}
+                          onChange={handleChange}
+                          placeholder="https://example.com/video.mp4"
+                        />
+                        <div className="flex items-center mt-1 text-xs text-gray-400">
+                          <Info className="h-3 w-3 mr-1" />
+                          <span>Use direct video URLs or YouTube links</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mb-4">
+                        {movieFile ? (
+                          <div className="p-4 bg-gray-800 rounded-lg">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-medium truncate max-w-xs">{movieFile.name}</span>
+                              <button 
+                                type="button" 
+                                className="text-gray-400 hover:text-white"
+                                onClick={clearMovieFile}
+                              >
+                                <X className="h-5 w-5" />
+                              </button>
+                            </div>
+                            <div className="flex items-center text-sm text-gray-400">
+                              <span className="mr-2">{(movieFile.size / (1024 * 1024)).toFixed(2)} MB</span>
+                              <span>{movieFile.type}</span>
+                            </div>
+                            
+                            {isUploading && (
+                              <div className="mt-2">
+                                <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+                                  <div 
+                                    className="h-full bg-[#e50914] transition-all duration-300"
+                                    style={{ width: `${uploadProgress}%` }}
+                                  ></div>
+                                </div>
+                                <div className="flex justify-between mt-1 text-xs">
+                                  <span>Uploading...</span>
+                                  <span>{uploadProgress}%</span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="border-2 border-dashed border-gray-700 rounded-lg p-6 text-center">
+                            <input
+                              ref={movieFileInputRef}
+                              type="file"
+                              accept="video/*"
+                              onChange={handleMovieFileChange}
+                              className="hidden"
+                            />
+                            <Upload className="mx-auto h-12 w-12 text-gray-500 mb-2" />
+                            <p className="text-sm text-gray-400 mb-2">
+                              Drag and drop your video file here or click to browse
+                            </p>
+                            <button
+                              type="button"
+                              onClick={handleUploadClick}
+                              className="btn-secondary text-sm"
+                            >
+                              Browse files
+                            </button>
+                          </div>
+                        )}
+                        <p className="mt-2 text-xs text-gray-400">
+                          Supported formats: MP4, WebM, MOV (max 2GB)
+                        </p>
+                      </div>
+                    )}
+                    
+                    <div className="p-4 bg-gray-800 rounded-lg">
+                      <h3 className="text-md font-medium mb-2">Video Format Guide</h3>
+                      <p className="text-sm text-gray-300 mb-2">
                         Supported video formats for best playback experience:
                       </p>
                       <ul className="text-sm text-gray-400 list-disc pl-5 space-y-1">
-                        <li>MP4 videos (direct URLs)</li>
+                        <li>MP4 videos (direct URLs or file upload)</li>
                         <li>YouTube links</li>
                         <li>WebM videos</li>
                         <li>HLS streams (.m3u8)</li>
@@ -499,14 +638,23 @@ export default function AdminPage() {
                     setShowForm(false);
                     resetForm();
                   }}
+                  disabled={isUploading}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   className="btn-primary"
+                  disabled={isUploading}
                 >
-                  {editingMovie ? 'Update Movie' : 'Add Movie'}
+                  {isUploading ? (
+                    <span className="flex items-center">
+                      <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>
+                      {editingMovie ? 'Updating...' : 'Uploading...'}
+                    </span>
+                  ) : (
+                    editingMovie ? 'Update Movie' : 'Add Movie'
+                  )}
                 </button>
               </div>
             </form>
