@@ -39,8 +39,8 @@ export default function AdminPage() {
   const movieFileInputRef = useRef<HTMLInputElement>(null);
   
   const [availableGenres] = useState([
-    'Action', 'Adventure', 'Comedy', 'Drama', 'Fantasy', 'Horror', 
-    'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'Western', 'History','Animation'
+    'Action', 'Adventure', 'Comedy', 'Drama', 'Fantasy', 'Horror', 'Crime',
+    'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'Western', 'History','Animation','Documentation'
   ]);
 
   // Validate that the user is an admin
