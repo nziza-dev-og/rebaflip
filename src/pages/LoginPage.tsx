@@ -85,7 +85,7 @@ export default function LoginPage() {
         <div className="absolute top-6 left-6">
           <Link to="/" className="flex items-center text-white">
             <Film className="text-[#e50914] h-8 w-8" />
-            <span className="ml-2 text-xl font-bold">CineFlix</span>
+            <span className="ml-2 text-xl font-bold">RebaFlip</span>
           </Link>
         </div>
         
