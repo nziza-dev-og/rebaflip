@@ -77,7 +77,7 @@ export default function LoginPage() {
       <div 
         className="flex-1 flex items-center justify-center p-4"
         style={{
-          backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixid=M3w3MjUzNDh8MHwxfHNlYXJjaHwxfHxkYXJrJTIwY2luZW1hJTIwbW92aWUlMjB0aGVhdGVyfGVufDB8fHx8MTc0NTY1MTQ2MHww&ixlib=rb-4.0.3&fit=fillmax&h=1080&w=1920")',
+          backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://i.pinimg.com/736x/02/16/d3/0216d3d1bfc4ec84482b1e3da66d9be0.jpg")',
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}
