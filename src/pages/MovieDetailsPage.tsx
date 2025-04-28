@@ -79,7 +79,7 @@ export default function MovieDetailsPage() {
       // Create a direct download link for the video
       const url = movie.videoUrl.includes('hooks.jdoodle.net/proxy') 
         ? movie.videoUrl 
-        : `https://hooks.jdoodle.net/proxy?url=${encodeURIComponent(movie.videoUrl)}`;
+        : `https://movies-server-plia.onrender.com/proxy?url=${encodeURIComponent(movie.videoUrl)}`;
       
       // Create anchor element and trigger download
       const a = document.createElement('a');
