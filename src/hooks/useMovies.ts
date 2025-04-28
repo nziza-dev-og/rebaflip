@@ -1,6 +1,20 @@
 import  { useState, useEffect, useCallback } from 'react';
-import { collection, getDocs, query, where, doc, getDoc, addDoc, updateDoc, deleteDoc, serverTimestamp, orderBy, limit } from 'firebase/firestore';
-import { db } from '../firebase';
+import { 
+  collection, 
+  getDocs, 
+  query, 
+  where, 
+  doc, 
+  getDoc, 
+  addDoc, 
+  updateDoc, 
+  deleteDoc, 
+  serverTimestamp, 
+  orderBy, 
+  limit 
+} from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../firebase';
 import { Movie } from '../types';
 
 export function useMovies() {
@@ -179,6 +193,51 @@ export function useMovies() {
     }
   }, []);
 
+  const uploadMovieFile = async (file: File, movieTitle: string, onProgress?: (progress: number) => void): Promise<string> => {
+    try {
+      // Generate a unique file name with timestamp to avoid conflicts
+      const timestamp = new Date().getTime();
+      const sanitizedTitle = movieTitle.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+      const fileName = `movies/${timestamp}_${sanitizedTitle}${file.name.substring(file.name.lastIndexOf('.'))}`;
+      
+      const storageRef = ref(storage, fileName);
+      
+      // Upload the file with progress monitoring
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      
+      return new Promise((resolve, reject) => {
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            const progress = Math.round(
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            );
+            if (onProgress) onProgress(progress);
+            console.log(`Upload progress: ${progress}%`);
+          },
+          (error) => {
+            console.error('Error uploading file:', error);
+            reject(error);
+          },
+          async () => {
+            try {
+              // Get the download URL once upload completes
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              console.log('File uploaded. Download URL:', downloadURL);
+              resolve(downloadURL);
+            } catch (err) {
+              console.error('Error getting download URL:', err);
+              reject(err);
+            }
+          }
+        );
+      });
+    } catch (err) {
+      console.error('Error initiating upload:', err);
+      throw err;
+    }
+  };
+
   const addMovie = async (movie: Omit<Movie, 'id' | 'createdAt'>, posterFile: File) => {
     try {
       setLoading(true);
@@ -283,7 +342,8 @@ export function useMovies() {
     fetchMovieById,
     addMovie,
     updateMovie,
-    deleteMovie
+    deleteMovie,
+    uploadMovieFile
   };
 }
  
