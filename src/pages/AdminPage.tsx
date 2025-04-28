@@ -32,7 +32,7 @@ export default function AdminPage() {
   
   const [availableGenres] = useState([
     'Action', 'Adventure', 'Comedy', 'Drama', 'Fantasy', 'Horror', 
-    'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'Western', 'Animation'
+    'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'Western', 'History', 'Animation'
   ]);
 
   // Validate that the user is an admin
