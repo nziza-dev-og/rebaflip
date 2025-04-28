@@ -6,7 +6,7 @@ import Footer from '../components/Footer';
 import MovieCard from '../components/MovieCard';
 import { useMovies } from '../hooks/useMovies';
 
-const genres = ['Action', 'Drama', 'Comedy', 'Sci-Fi', 'Horror', 'Thriller', 'Romance', 'Animation', 'History'];
+const genres = ['Action', 'Drama', 'Comedy', 'Sci-Fi', 'Horror', 'Thriller', 'Romance', 'Animation', 'History''Crime','Documentation',];
 
 export default function MoviesPage() {
   const location = useLocation();
