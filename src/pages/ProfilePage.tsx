@@ -189,9 +189,9 @@ export default function ProfilePage() {
                     <input
                       id="opacity-control"
                       type="range"
-                      min="50"
+                      min="20"
                       max="100"
-                      step="5"
+                      step="8"
                       value={themeOpacity}
                       onChange={handleThemeOpacityChange}
                       className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-[#e50914]"
