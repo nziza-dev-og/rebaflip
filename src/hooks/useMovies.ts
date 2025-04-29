@@ -152,6 +152,46 @@ export function useMovies() {
     }
   }, []);
 
+  const fetchMoviesByYear = useCallback(async (year: number) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const q = query(collection(db, 'movies'), where('releaseYear', '==', year));
+      const snapshot = await getDocs(q);
+      
+      const moviesData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        // Ensure all required fields exist
+        title: doc.data().title || 'Untitled Movie',
+        description: doc.data().description || 'No description available',
+        genre: doc.data().genre || ['Unknown'],
+        releaseYear: year,
+        rating: doc.data().rating || 0,
+        duration: doc.data().duration || 'Unknown',
+        posterUrl: doc.data().posterUrl || 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&h=900',
+        videoUrl: doc.data().videoUrl || '',
+        featured: doc.data().featured || false,
+        createdAt: doc.data().createdAt || new Date()
+      })) as Movie[];
+      
+      // Sort locally
+      moviesData.sort((a, b) => {
+        const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+        const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+        return dateB.getTime() - dateA.getTime();
+      });
+      
+      console.log(`Fetched ${moviesData.length} movies from ${year}`);
+      setMovies(moviesData);
+    } catch (err: any) {
+      console.error(`Error fetching movies from ${year}:`, err);
+      setError(`Failed to fetch movies from ${year}: ` + err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const fetchMovieById = useCallback(async (id: string) => {
     try {
       setLoading(true);
@@ -339,6 +379,7 @@ export function useMovies() {
     fetchMovies,
     fetchFeaturedMovies,
     fetchMoviesByGenre,
+    fetchMoviesByYear,
     fetchMovieById,
     addMovie,
     updateMovie,
