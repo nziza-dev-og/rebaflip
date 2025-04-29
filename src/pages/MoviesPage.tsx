@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Filter } from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -23,12 +23,13 @@ const years = generateYears();
 export default function MoviesPage() {
   const location = useLocation();
   const { movies, loading, fetchMovies, fetchMoviesByGenre } = useMovies();
-  const [filteredMovies, setFilteredMovies] = useState(movies);
-  const [activeGenre, setActiveGenre] = useState<string | null>(null);
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const [filteredMovies, setFilteredMovies] = useState([]);
+  const [activeGenre, setActiveGenre] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   
+  // Parse URL parameters on component mount and route changes
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const genre = params.get('genre');
@@ -44,8 +45,9 @@ export default function MoviesPage() {
     if (year && !isNaN(Number(year))) {
       setSelectedYear(Number(year));
     }
-  }, [location]);
+  }, [location, fetchMovies, fetchMoviesByGenre]);
   
+  // Apply filters whenever movies, searchTerm, or selectedYear changes
   useEffect(() => {
     let filtered = [...movies];
     
@@ -53,19 +55,22 @@ export default function MoviesPage() {
     if (searchTerm) {
       filtered = filtered.filter(movie => 
         movie.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        movie.description.toLowerCase().includes(searchTerm.toLowerCase())
+        movie.description?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
     
-    // Apply year filter
-    if (selectedYear) {
-      filtered = filtered.filter(movie => movie.releaseYear === selectedYear);
+    // Apply year filter - ensure we're comparing numbers to numbers
+    if (selectedYear !== null) {
+      filtered = filtered.filter(movie => 
+        movie.releaseYear === selectedYear || 
+        parseInt(movie.releaseYear) === selectedYear
+      );
     }
     
     setFilteredMovies(filtered);
   }, [movies, searchTerm, selectedYear]);
   
-  const handleGenreFilter = (genre: string) => {
+  const handleGenreFilter = (genre) => {
     if (activeGenre === genre) {
       setActiveGenre(null);
       fetchMovies();
@@ -75,7 +80,7 @@ export default function MoviesPage() {
     }
   };
   
-  const handleYearFilter = (year: number) => {
+  const handleYearFilter = (year) => {
     if (selectedYear === year) {
       setSelectedYear(null);
     } else {
@@ -249,4 +254,3 @@ export default function MoviesPage() {
     </div>
   );
 }
- 
