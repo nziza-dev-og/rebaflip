@@ -189,7 +189,7 @@ export default function ProfilePage() {
                     <input
                       id="opacity-control"
                       type="range"
-                      min="20"
+                      min="25"
                       max="100"
                       step="8"
                       value={themeOpacity}
