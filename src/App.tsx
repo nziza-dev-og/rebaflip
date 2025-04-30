@@ -7,6 +7,8 @@ import { AuthProvider } from './contexts/AuthContext';
 const HomePage = lazy(() => import('./pages/HomePage'));
 const MoviesPage = lazy(() => import('./pages/MoviesPage'));
 const MovieDetailsPage = lazy(() => import('./pages/MovieDetailsPage'));
+const SeriesPage = lazy(() => import('./pages/SeriesPage'));
+const SeriesDetailsPage = lazy(() => import('./pages/SeriesDetailsPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
@@ -30,6 +32,8 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/movies" element={<MoviesPage />} />
           <Route path="/movie/:id" element={<MovieDetailsPage />} />
+          <Route path="/series" element={<SeriesPage />} />
+          <Route path="/series/:id" element={<SeriesDetailsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/admin" element={<AdminPage />} />
