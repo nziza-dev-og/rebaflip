@@ -1,8 +1,7 @@
 import  { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {  LogOut, Menu, User } from 'lucide-react';
+import { Film, LogOut, Menu, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import logoImage from '../assets/large-removebg-preview.png';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,14 +22,15 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex-shrink-0 flex items-center">
-          <img src={logoImage} alt="Description of Image" width={180} height={60} />
-            <span className="ml-2 text-xl font-bold">RebaFlip</span>
+            <Film className="text-[#e50914] h-8 w-8" />
+            <span className="ml-2 text-xl font-bold">RebAflix</span>
           </Link>
           
           <div className="hidden md:block">
             <div className="ml-10 flex items-center space-x-4">
               <Link to="/" className="text-gray-300 hover:text-white px-3 py-2">Home</Link>
               <Link to="/movies" className="text-gray-300 hover:text-white px-3 py-2">Movies</Link>
+              <Link to="/series" className="text-gray-300 hover:text-white px-3 py-2">TV Series</Link>
               {user?.isAdmin && (
                 <Link to="/admin" className="text-gray-300 hover:text-white px-3 py-2">Admin</Link>
               )}
@@ -62,6 +62,7 @@ export default function Navbar() {
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <Link to="/" className="text-gray-300 hover:text-white block px-3 py-2">Home</Link>
             <Link to="/movies" className="text-gray-300 hover:text-white block px-3 py-2">Movies</Link>
+            <Link to="/series" className="text-gray-300 hover:text-white block px-3 py-2">TV Series</Link>
             {user?.isAdmin && (
               <Link to="/admin" className="text-gray-300 hover:text-white block px-3 py-2">Admin</Link>
             )}
